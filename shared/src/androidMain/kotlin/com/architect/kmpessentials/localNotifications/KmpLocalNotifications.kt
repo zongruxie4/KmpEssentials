@@ -1,6 +1,7 @@
 package com.architect.kmpessentials.localNotifications
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.AlarmManager
 import android.app.Notification
 import android.app.NotificationChannel
@@ -21,6 +22,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kotlin.random.Random
+import kotlin.reflect.KClass
 
 actual class KmpLocalNotifications {
     actual companion object {
@@ -31,8 +33,15 @@ actual class KmpLocalNotifications {
         private val standardChannel = "default"
         private val notificationChannelName = "Default"
 
+        private var activityType: KClass<out Activity>? = null
+
         private val notifManager by lazy {
             KmpAndroid.applicationContext?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        }
+
+
+        fun setPendingIntentActivityType(activityType: KClass<out Activity>?) {
+            this.activityType = activityType
         }
 
         // cleans up the local storage from any notifications keys no longer in use
@@ -161,7 +170,23 @@ actual class KmpLocalNotifications {
                 .setContentTitle(title)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentText(message)
+                .setAutoCancel(true)
                 .setSmallIcon(notificationIcon)
+
+            if (activityType != null) {
+                val intent = Intent(KmpAndroid.applicationContext, activityType!!.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                }
+
+                val pendingIntent = PendingIntent.getActivity(
+                    KmpAndroid.applicationContext,
+                    0,
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
+
+                notification.setContentIntent(pendingIntent)
+            }
 
             return notification.build()
         }
@@ -178,7 +203,23 @@ actual class KmpLocalNotifications {
                 .setContentTitle(title)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentText(message)
+                .setAutoCancel(true)
                 .setSmallIcon(notificationIcon)
+
+            if (activityType != null) {
+                val intent = Intent(KmpAndroid.applicationContext, activityType!!.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                }
+
+                val pendingIntent = PendingIntent.getActivity(
+                    KmpAndroid.applicationContext,
+                    0,
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
+
+                notification.setContentIntent(pendingIntent)
+            }
 
             return notification.build()
         }
