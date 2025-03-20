@@ -24,6 +24,7 @@ import platform.UIKit.UIApplicationOpenSettingsURLString
 @OptIn(ExperimentalForeignApi::class)
 actual class KmpLauncher {
     actual companion object {
+        private var listOfTimers = mutableListOf<NSTimer>()
         actual fun startTimer(seconds: Double, action: DefaultActionWithBooleanReturn) {
             KmpMainThread.runViaMainThread {
                 val timer = NSTimer.scheduledTimerWithTimeInterval(seconds, false, { timer ->
@@ -33,6 +34,7 @@ actual class KmpLauncher {
                 });
 
                 NSRunLoop.mainRunLoop.addTimer(timer, NSRunLoopCommonModes);
+                listOfTimers.add(timer)
             }
         }
 
@@ -45,6 +47,17 @@ actual class KmpLauncher {
                 });
 
                 NSRunLoop.mainRunLoop.addTimer(timer, NSRunLoopCommonModes);
+                listOfTimers.add(timer)
+            }
+        }
+
+        actual fun cancelAllTimers() {
+            KmpMainThread.runViaMainThread {
+                listOfTimers.forEach {
+                    it.invalidate()
+                }
+
+                listOfTimers.clear()
             }
         }
 
@@ -96,8 +109,7 @@ actual class KmpLauncher {
                         KmpLogging.writeError("KmpEssentials", "Failed to Open NSURL")
                     }
                 }
-            }
-            else {
+            } else {
                 KmpLogging.writeError("KmpEssentials", "Failed to Open NSURL")
             }
         }
@@ -106,7 +118,7 @@ actual class KmpLauncher {
             UIApplication.sharedApplication.openURL(
                 NSURL(
                     string =
-                    UIApplicationOpenSettingsURLString
+                        UIApplicationOpenSettingsURLString
                 ),
                 options = emptyMap<Any?, Any>()
             ) {

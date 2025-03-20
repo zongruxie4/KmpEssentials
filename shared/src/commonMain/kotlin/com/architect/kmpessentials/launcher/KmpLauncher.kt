@@ -20,6 +20,11 @@ expect class KmpLauncher {
         fun startTimerRepeating(seconds: Double, action: DefaultActionWithBooleanReturn)
 
         /**
+         * Cancels all running timers
+         * */
+        fun cancelAllTimers()
+
+        /**
          * Launches the native maps app with directions. Navigates the user to address.
          * @param address the full address to direct the user to
          * */

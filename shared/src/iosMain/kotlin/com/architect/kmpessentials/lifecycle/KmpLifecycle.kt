@@ -1,5 +1,6 @@
 package com.architect.kmpessentials.lifecycle
 
+import com.architect.kmpessentials.aliases.DefaultAction
 import com.architect.kmpessentials.aliases.DefaultActionAsync
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withTimeoutOrNull
@@ -12,6 +13,7 @@ actual class KmpLifecycle {
     actual companion object {
         private var backgroundAction: (() -> Unit)? = null
         private var foregroundAction: (() -> Unit)? = null
+        private var destroyAction: DefaultAction? = null
         private var isInForeground: Boolean
 
         init {
@@ -36,6 +38,10 @@ actual class KmpLifecycle {
          */
         actual fun setAppLifecycleForeground(action: () -> Unit) {
             foregroundAction = action
+        }
+
+        actual fun setAppLifecycleDestroy(action: DefaultAction) {
+            destroyAction = action
         }
 
         actual suspend fun waitForAppToReturnToForegroundWithTimeout(
@@ -76,6 +82,7 @@ actual class KmpLifecycle {
         actual fun resetAppLifecycleActions() {
             backgroundAction = null
             foregroundAction = null
+            destroyAction = null
         }
 
         /**
@@ -96,12 +103,21 @@ actual class KmpLifecycle {
 
             // Observe app entering the foreground
             notificationCenter.addObserverForName(
-                name = UIApplicationWillEnterForegroundNotification,
+                name = UIApplicationDidBecomeActiveNotification,
                 `object` = null,
                 queue = null
             ) { _ ->
                 foregroundAction?.invoke()
                 isInForeground = true
+            }
+
+            notificationCenter.addObserverForName(
+                name = UIApplicationWillTerminateNotification,
+                `object` = null,
+                queue = null
+            ) { _ ->
+                destroyAction?.invoke()
+                isInForeground = false
             }
         }
     }

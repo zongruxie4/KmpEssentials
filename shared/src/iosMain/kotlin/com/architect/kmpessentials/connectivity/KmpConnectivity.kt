@@ -2,12 +2,23 @@ package com.architect.kmpessentials.connectivity
 
 import com.architect.kmpessentials.internal.ActionBoolParams
 import dev.tmapps.konnection.Konnection
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 actual class KmpConnectivity {
     actual companion object {
         private val konnection = Konnection.instance
+        private var hasConnection = false
+        init {
+            GlobalScope.launch {
+                konnection.observeHasConnection().collect{
+                    hasConnection = it
+                }
+            }
+        }
+
         actual fun isConnected(): Boolean {
-            return konnection.isConnected()
+            return hasConnection
         }
 
         actual fun getCurrentNetworkName(): String? {

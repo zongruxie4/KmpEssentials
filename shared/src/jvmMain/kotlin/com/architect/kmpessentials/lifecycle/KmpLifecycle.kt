@@ -5,8 +5,9 @@ import com.architect.kmpessentials.aliases.DefaultActionAsync
 
 actual class KmpLifecycle {
     actual companion object {
-        internal var backgroundAction: DefaultAction? = null
-        internal var foregroundAction: DefaultAction? = null
+        private var backgroundAction: DefaultAction? = null
+        private var foregroundAction: DefaultAction? = null
+        private var destroyAction: DefaultAction? = null
 
         /**
          *  Registers an action that is run after the app enters the background state
@@ -24,6 +25,10 @@ actual class KmpLifecycle {
          * */
         actual fun setAppLifecycleForeground(action: DefaultAction) {
             foregroundAction = action
+        }
+
+        actual fun setAppLifecycleDestroy(action: DefaultAction) {
+            destroyAction = action
         }
 
         actual suspend fun waitForAppToReturnToForeground(action: DefaultActionAsync){
@@ -45,6 +50,7 @@ actual class KmpLifecycle {
         actual fun resetAppLifecycleActions() {
             backgroundAction = null
             foregroundAction = null
+            destroyAction = null
         }
     }
 }

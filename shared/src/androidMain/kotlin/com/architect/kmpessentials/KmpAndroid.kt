@@ -3,7 +3,6 @@ package com.architect.kmpessentials
 import ApplicationLifecycleObserver
 import android.app.Activity
 import android.app.Application
-import android.content.IntentFilter
 import android.os.Build
 import android.os.Build.VERSION_CODES
 import androidx.activity.OnBackPressedCallback
@@ -19,7 +18,6 @@ import com.architect.kmpessentials.filePicker.KmpFilePicker
 import com.architect.kmpessentials.filePicker.internals.utilities.appConst.Const
 import com.architect.kmpessentials.internals.FilePickingMode
 import com.architect.kmpessentials.localNotifications.KmpLocalNotifications
-import com.architect.kmpessentials.localNotifications.receivers.LocalAlarmReceiver
 import com.architect.kmpessentials.mediaPicker.KmpMediaPicker
 import com.architect.kmpessentials.permissions.KmpPermissionsManager
 
@@ -194,3 +192,5 @@ class KmpAndroid {
         }
     }
 }
+
+

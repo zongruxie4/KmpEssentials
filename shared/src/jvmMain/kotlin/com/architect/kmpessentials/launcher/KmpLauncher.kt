@@ -19,6 +19,10 @@ actual class KmpLauncher {
             }, milliseconds)
         }
 
+        actual fun cancelAllTimers(){
+
+        }
+
         actual fun startTimerRepeating(seconds: Double, action: () -> Boolean) {
             val milliseconds = (seconds * 1000).toLong()
             Timer().scheduleAtFixedRate(object : TimerTask() {

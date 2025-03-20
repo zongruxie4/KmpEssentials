@@ -10,6 +10,8 @@ import platform.AVFAudio.setActive
 import platform.Foundation.*
 import platform.MediaPlayer.*
 import kotlinx.cinterop.*
+import platform.AVFAudio.AVAudioSessionCategoryOptionAllowAirPlay
+import platform.AVFAudio.AVAudioSessionCategoryOptionAllowBluetooth
 
 @OptIn(ExperimentalForeignApi::class)
 internal class SilentAudioService {
@@ -30,7 +32,12 @@ internal class SilentAudioService {
     fun playAudioFromByteArray() {
         try {
             val session = AVAudioSession.sharedInstance()
-            session.setCategory(AVAudioSessionCategoryPlayback, null)
+            session.setCategory(
+                AVAudioSessionCategoryPlayback,
+                error = null,
+                withOptions = AVAudioSessionCategoryOptionAllowBluetooth or AVAudioSessionCategoryOptionAllowAirPlay,
+            )
+
             session.setActive(true, error = null)
 
             val audioFile = getMp3FilePath()!!
@@ -55,12 +62,12 @@ internal class SilentAudioService {
                 player?.play()
 
                 if (player?.playing == true) {
-                    KmpLogging.writeError("KMP_MP3","🔊 AVAudioPlayer is playing!")
+                    KmpLogging.writeError("KMP_MP3", "🔊 AVAudioPlayer is playing!")
                 } else {
-                    KmpLogging.writeError("KMP_MP3","❌ AVAudioPlayer failed to play")
+                    KmpLogging.writeError("KMP_MP3", "❌ AVAudioPlayer failed to play")
                 }
 
-                KmpLogging.writeError("KMP_MP3","🎵 MP3 Playback started successfully.")
+                KmpLogging.writeError("KMP_MP3", "🎵 MP3 Playback started successfully.")
             }
             println("🔊 Audio playback started (from ByteArray).")
         } catch (e: Exception) {

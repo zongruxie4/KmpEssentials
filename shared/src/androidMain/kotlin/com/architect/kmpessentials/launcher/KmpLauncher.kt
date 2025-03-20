@@ -9,23 +9,42 @@ import com.architect.kmpessentials.KmpAndroid
 import com.architect.kmpessentials.aliases.DefaultActionWithBooleanReturn
 import com.architect.kmpessentials.aliases.DefaultActionWithBooleanReturnAsync
 import com.architect.kmpessentials.launcher.constants.UriPrefixes
+import com.architect.kmpessentials.mainThread.KmpMainThread
 
 actual class KmpLauncher {
     actual companion object {
+        private val handlers = mutableListOf<Pair<Handler, Runnable>>()
+        actual fun cancelAllTimers() {
+            KmpMainThread.runViaMainThread {
+                handlers.forEach { (handler, runnable) -> handler.removeCallbacks(runnable) }
+                handlers.clear()
+            }
+        }
+
         actual fun startTimer(seconds: Double, action: DefaultActionWithBooleanReturn) {
-            val handler = Handler(Looper.getMainLooper());
-            handler.postDelayed({
-                if (action())
-                    startTimer(seconds, action);
-            }, seconds.toLong() * 1000);
+            KmpMainThread.runViaMainThread {
+                val handler = Handler(Looper.getMainLooper());
+                val runnable = Runnable { action() }
+
+                handler.postDelayed(runnable, seconds.toLong() * 1000);
+                handlers.add(handler to runnable)
+            }
         }
 
         actual fun startTimerRepeating(seconds: Double, action: DefaultActionWithBooleanReturn) {
-            val handler = Handler(Looper.getMainLooper());
-            handler.postDelayed({
-                if (action())
-                    startTimer(seconds, action);
-            }, seconds.toLong() * 1000);
+            KmpMainThread.runViaMainThread {
+                val handler = Handler(Looper.getMainLooper());
+                val runnable = object : Runnable {
+                    override fun run() {
+                        if (action()) {
+                            handler.postDelayed(this, (seconds * 1000).toLong())
+                        }
+                    }
+                }
+
+                handler.postDelayed(runnable, seconds.toLong() * 1000);
+                handlers.add(handler to runnable)
+            }
         }
 
         private fun addIntentFlags(intent: Intent) {

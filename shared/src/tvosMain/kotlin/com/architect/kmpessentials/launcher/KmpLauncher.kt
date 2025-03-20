@@ -8,6 +8,10 @@ actual class KmpLauncher {
 
         }
 
+        actual fun cancelAllTimers(){
+
+        }
+
         actual fun startTimerRepeating(seconds: Double, action: DefaultActionWithBooleanReturn) {
 
         }

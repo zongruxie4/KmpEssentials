@@ -12,7 +12,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.FragmentActivity
 import com.architect.kmpessentials.KmpAndroid
+import com.architect.kmpessentials.KmpCoreApplication
 import com.architect.kmpessentials.backgrounding.KmpBackgrounding
+import com.architect.kmpessentials.lifecycle.KmpLifecycle
 import com.architect.kmpessentials.localNotifications.KmpLocalNotifications
 import com.architect.kmpessentials.logging.KmpLogging
 import com.architect.testclient.android.MyApplicationTheme
@@ -26,6 +28,11 @@ class MainActivity : FragmentActivity() {
         KmpAndroid.initializeApp(this)
 
         KmpLocalNotifications.setNotificationIcon(R.drawable.ic_launcher_background)
+
+        KmpLifecycle.setAppLifecycleDestroy {
+            KmpLocalNotifications.sendNotification("AHAHAH", "HAAHA<MMMAAHAHAHAHA!")
+        }
+
         //    KmpLocalNotifications.scheduleAlarmNotification(5000, "Hello", "Testing")
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
 //            val permission = android.Manifest.permission.FOREGROUND_SERVICE_DATA_SYNC
@@ -34,16 +41,6 @@ class MainActivity : FragmentActivity() {
 //                ActivityCompat.requestPermissions(this, arrayOf(permission), 1001)
 //            }
 //        }
-
-        KmpBackgrounding.createAndStartForegroundWorker("Sample", "Notification") {
-            var delays = 100
-            while (delays >= 0) {
-                delay(1000)
-                delays--
-                KmpLogging.writeInfo("ForegroundServiceNotification", "Sample Notification")
-                //      KmpLocalNotifications.sendNotification("Hello Foreground Service", "Hello there")
-            }
-        }
 
         setContent {
             MyApplicationTheme {
@@ -91,4 +88,8 @@ fun DefaultPreview() {
     MyApplicationTheme {
         GreetingView("Hello, Android!")
     }
+}
+
+class CoreApp : KmpCoreApplication(){
+
 }

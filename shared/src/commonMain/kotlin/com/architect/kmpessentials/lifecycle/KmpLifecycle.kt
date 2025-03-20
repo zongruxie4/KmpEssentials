@@ -20,6 +20,11 @@ expect class KmpLifecycle {
        fun setAppLifecycleForeground(action: DefaultAction)
 
        /**
+        *  Registers an action that is run after the app is closed by the user
+        * */
+       fun setAppLifecycleDestroy(action: DefaultAction)
+
+       /**
         * Waits for the app to return to the foreground, and runs the action after the foreground state is achieved
         * @param action action to invoke once returning to the foreground state
         * */

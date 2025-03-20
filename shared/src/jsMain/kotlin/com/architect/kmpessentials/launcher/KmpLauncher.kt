@@ -8,6 +8,10 @@ actual class KmpLauncher {
             return js("encodeURIComponent(value)") as String
         }
 
+        actual fun cancelAllTimers(){
+
+        }
+
         actual fun startTimer(seconds: Double, action: () -> Boolean) {
             val milliseconds = (seconds * 1000).toInt()
 

@@ -7,6 +7,7 @@ actual class KmpLifecycle {
     actual companion object {
         internal var backgroundAction: DefaultAction? = null
         internal var foregroundAction: DefaultAction? = null
+        internal var destroyAction: DefaultAction? = null
 
         /**
          *  Registers an action that is run after the app enters the background state
@@ -21,6 +22,10 @@ actual class KmpLifecycle {
          * */
         actual fun setAppLifecycleForeground(action: DefaultAction) {
             foregroundAction = action
+        }
+
+        actual fun setAppLifecycleDestroy(action: DefaultAction) {
+            destroyAction = action
         }
 
         actual suspend fun waitForAppToReturnToForeground(action: DefaultActionAsync) {
@@ -42,6 +47,7 @@ actual class KmpLifecycle {
         actual fun resetAppLifecycleActions() {
             backgroundAction = null
             foregroundAction = null
+            destroyAction = null
         }
 
         actual fun isCurrentlyInForeground(): Boolean {
