@@ -58,10 +58,35 @@ actual class KmpLifecycle {
                         break
                     }
                 }
+
+                true
             }
 
-            action() // Run action after timeout or foreground detection
+            action()
         }
+
+
+        actual suspend fun waitForAppToReturnToBackgroundWithTimeout(
+            milliseconds: Long,
+            action: DefaultActionAsync
+        ) {
+            val startTime = System.currentTimeMillis()
+            withTimeoutOrNull(milliseconds) { // Enforce timeout
+                while (isInForeground) {
+                    delay(1000) // Check every second
+
+                    // If the timeout is reached, exit the loop
+                    if (System.currentTimeMillis() - startTime >= milliseconds) {
+                        break
+                    }
+                }
+
+                true
+            }
+
+            action()
+        }
+
 
         /**
          *  Resets all the lifecycle actions.

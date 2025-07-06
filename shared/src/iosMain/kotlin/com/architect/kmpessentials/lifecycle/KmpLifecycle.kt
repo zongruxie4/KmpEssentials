@@ -7,10 +7,18 @@ import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.datetime.Clock
 import platform.Foundation.*
 import platform.UIKit.*
+import kotlinx.atomicfu.atomic
+
+private enum class AppState {
+    FOREGROUND,
+    BACKGROUND
+}
 
 actual class KmpLifecycle {
 
     actual companion object {
+        private var currentState = atomic<AppState?>(null)
+
         private var backgroundAction: (() -> Unit)? = null
         private var foregroundAction: (() -> Unit)? = null
         private var destroyAction: DefaultAction? = null
@@ -49,24 +57,47 @@ actual class KmpLifecycle {
             action: DefaultActionAsync
         ) {
             val startTime = Clock.System.now().toEpochMilliseconds()
-
             withTimeoutOrNull(milliseconds) { // Enforce timeout
                 while (!isInForeground) { // Platform-specific check
-                    delay(1000) // Check every second
+                    delay(100) // Check every second
 
                     // If the timeout is reached, exit the loop
                     if (Clock.System.now().toEpochMilliseconds() - startTime >= milliseconds) {
                         break
                     }
                 }
+
+                true
             }
 
-            action() // Run action after timeout or foreground detection
+            action()
+        }
+
+        actual suspend fun waitForAppToReturnToBackgroundWithTimeout(
+            milliseconds: Long,
+            action: DefaultActionAsync
+        ) {
+            val startTime = Clock.System.now().toEpochMilliseconds()
+
+            withTimeoutOrNull(milliseconds) { // Enforce timeout
+                while (isInForeground) { // Platform-specific check
+                    delay(100) // Check every second
+
+                    // If the timeout is reached, exit the loop
+                    if (Clock.System.now().toEpochMilliseconds() - startTime >= milliseconds) {
+                        break
+                    }
+                }
+
+                true
+            }
+
+            action()
         }
 
         actual suspend fun waitForAppToReturnToForeground(action: DefaultActionAsync) {
             while (!isInForeground) { // checks if the app returns to the foreground
-                delay(1000)
+                delay(100)
             }
 
             action()
@@ -88,29 +119,62 @@ actual class KmpLifecycle {
         /**
          *  Initializes the lifecycle observers.
          */
+        private fun transitionTo(newState: AppState) {
+            val previous = currentState.value
+            if (previous != newState) {
+                currentState.value = newState
+                when (newState) {
+                    AppState.FOREGROUND -> {
+                        foregroundAction?.invoke()
+                        isInForeground = true
+                    }
+
+                    AppState.BACKGROUND -> {
+                        backgroundAction?.invoke()
+                        isInForeground = false
+                    }
+                }
+            }
+        }
+
         private fun setupLifecycleObservers() {
             val notificationCenter = NSNotificationCenter.defaultCenter
 
-            // Observe app entering the background
+            // Observe app entering background
             notificationCenter.addObserverForName(
                 name = UIApplicationDidEnterBackgroundNotification,
                 `object` = null,
                 queue = null
             ) { _ ->
-                backgroundAction?.invoke()
-                isInForeground = false
+                transitionTo(AppState.BACKGROUND)
             }
 
-            // Observe app entering the foreground
+            notificationCenter.addObserverForName(
+                name = UIApplicationWillResignActiveNotification,
+                `object` = null,
+                queue = null
+            ) { _ ->
+                transitionTo(AppState.BACKGROUND)
+            }
+
+            // Observe app entering foreground
             notificationCenter.addObserverForName(
                 name = UIApplicationDidBecomeActiveNotification,
                 `object` = null,
                 queue = null
             ) { _ ->
-                foregroundAction?.invoke()
-                isInForeground = true
+                transitionTo(AppState.FOREGROUND)
             }
 
+            notificationCenter.addObserverForName(
+                name = UIApplicationWillEnterForegroundNotification,
+                `object` = null,
+                queue = null
+            ) { _ ->
+                transitionTo(AppState.FOREGROUND)
+            }
+
+            // Observe app termination
             notificationCenter.addObserverForName(
                 name = UIApplicationWillTerminateNotification,
                 `object` = null,
@@ -118,6 +182,7 @@ actual class KmpLifecycle {
             ) { _ ->
                 destroyAction?.invoke()
                 isInForeground = false
+                currentState.value = null
             }
         }
     }

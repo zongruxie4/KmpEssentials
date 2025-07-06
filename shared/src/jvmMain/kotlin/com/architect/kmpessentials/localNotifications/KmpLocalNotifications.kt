@@ -15,6 +15,10 @@ actual class KmpLocalNotifications {
         private val scheduler = Executors.newScheduledThreadPool(1)
         private val scheduledAlarms = mutableMapOf<String, ScheduledFuture<*>>()
 
+        actual fun sendNotificationWithLowPriority(title: String, message: String){
+
+        }
+
         actual fun sendNotification(title: String, message: String) {
             KmpMainThread.runViaMainThread {
                 if (!SystemTray.isSupported()) {

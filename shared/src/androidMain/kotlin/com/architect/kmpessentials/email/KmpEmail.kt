@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import com.architect.kmpessentials.KmpAndroid
+import com.architect.kmpessentials.aliases.DefaultAction
 import com.architect.kmpessentials.internal.ActionBoolParams
 import com.architect.kmpessentials.mainThread.KmpMainThread
 import com.architect.kmpessentials.toast.KmpToast
@@ -26,6 +27,62 @@ actual class KmpEmail {
                 action(
                     !resolvedActivities.isNullOrEmpty()
                 )
+            }
+        }
+
+        actual fun openEmailClientApp(noAppsFound: DefaultAction?) {
+            KmpMainThread.runViaMainThread {
+                val context = KmpAndroid.getCurrentApplicationContext()
+                val emailApps = listOf(
+                    // Google
+                    "com.google.android.gm",
+
+                    // Microsoft
+                    "com.microsoft.office.outlook",
+
+                    // Yahoo
+                    "com.yahoo.mobile.client.android.mail",
+
+                    // Samsung
+                    "com.samsung.android.email.provider",
+
+                    // ProtonMail
+                    "ch.protonmail.android",
+
+                    // BlueMail
+                    "me.bluemail.mail",
+
+                    // Spark Email
+                    "com.readdle.spark",
+
+                    // Edison Mail
+                    "com.edison.email",
+
+                    // K-9 Mail
+                    "com.fsck.k9",
+
+                    // Aqua Mail
+                    "org.kman.AquaMail",
+
+                    // myMail
+                    "com.my.mail",
+
+                    // Zoho Mail
+                    "com.zoho.mail",
+                    "com.ninefolders.hd3",
+                    "de.gmx.mobile.android.mail",
+                    "ru.mail.mailapp"
+                )
+
+                val emailAppIntent = emailApps
+                    .mapNotNull { context.packageManager.getLaunchIntentForPackage(it) }
+                    .firstOrNull()
+
+                if (emailAppIntent != null) {
+                    context.startActivity(emailAppIntent)
+                } else {
+                    noAppsFound?.invoke()
+                }
             }
         }
 

@@ -104,9 +104,6 @@ actual class KmpLocalNotifications {
 
         fun setNotificationIcon(icon: Int) {
             notificationIcon = icon
-
-
-            // icon id needs to be written into public storage
         }
 
         private var allowExact = true
@@ -162,15 +159,16 @@ actual class KmpLocalNotifications {
             return data
         }
 
-        internal fun notificationBuilder(title: String, message: String): Notification {
+        internal fun notificationBuilder(title: String, message: String, lowPriority : Boolean = false): Notification {
             val notification = NotificationCompat.Builder(
                 KmpAndroid.applicationContext!!,
                 standardChannel
             )
                 .setContentTitle(title)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setPriority(if(lowPriority) NotificationCompat.PRIORITY_LOW else NotificationCompat.PRIORITY_HIGH)
                 .setContentText(message)
                 .setAutoCancel(true)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setSmallIcon(notificationIcon)
 
             if (activityType != null) {
@@ -222,6 +220,24 @@ actual class KmpLocalNotifications {
             }
 
             return notification.build()
+        }
+
+        actual fun sendNotificationWithLowPriority(title: String, message: String){
+            if (notificationIcon == 0) {
+                throw Exception("Notification Icon must be set. Please set via your Activities OnCreate method")
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val channel = NotificationChannel(
+                    standardChannel,
+                    notificationChannelName,
+                    NotificationManager.IMPORTANCE_LOW
+                )
+
+                notifManager.createNotificationChannel(channel)
+            }
+
+            notifManager.notify(Random.nextInt(), notificationBuilder(title, message, true))
         }
 
         actual fun sendNotification(title: String, message: String) {

@@ -1,6 +1,8 @@
 package com.architect.kmpessentials.email
 
+import com.architect.kmpessentials.aliases.DefaultAction
 import com.architect.kmpessentials.internal.ActionBoolParams
+import com.architect.kmpessentials.toast.KmpToast
 import java.awt.Desktop
 import java.net.URI
 import java.net.URLEncoder
@@ -22,6 +24,10 @@ actual class KmpEmail {
                 Desktop.isDesktopSupported() && Desktop.getDesktop()
                     .isSupported(Desktop.Action.MAIL)
             )
+        }
+
+        actual fun openEmailClientApp(noAppsFound: DefaultAction?){
+
         }
 
         actual fun sendEmailToAddress(address: String, emailSubject: String, emailMessage: String) {

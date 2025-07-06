@@ -1,5 +1,6 @@
 package com.architect.kmpessentials.email
 
+import com.architect.kmpessentials.aliases.DefaultAction
 import com.architect.kmpessentials.internal.ActionBoolParams
 
 
@@ -14,6 +15,11 @@ expect class KmpEmail {
          * Sends an email to multiple recipients
          * */
         fun sendEmailsToCCAddress(address: String, ccAddresses: Array<String>? = null, emailSubject : String = "", emailMessage: String = "")
+
+        /**
+         * Opens the email app or choice of apps available capable of handling emails
+         * */
+        fun openEmailClientApp(noAppsFound: DefaultAction? = null)
 
         /**
          * Checks if email is currently supported on the device.

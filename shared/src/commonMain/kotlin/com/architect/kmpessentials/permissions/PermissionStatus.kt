@@ -5,5 +5,5 @@ enum class PermissionStatus{
     Denied,
     Idle,
     DeniedAlways,
-    NotDetermined
+    NotDetermined,
 }

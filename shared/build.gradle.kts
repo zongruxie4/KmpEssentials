@@ -196,6 +196,7 @@ kotlin {
         }
     }
 }
+
 //
 //tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink>().configureEach {
 //    doLast {
@@ -234,7 +235,7 @@ afterEvaluate {
         coordinates(
             groupId = "io.github.thearchitect123",
             artifactId = "kmpEssentials",
-            version = "2.1.8"
+            version = "2.3.3"
         )
 
         // Configure POM metadata for the published artifact

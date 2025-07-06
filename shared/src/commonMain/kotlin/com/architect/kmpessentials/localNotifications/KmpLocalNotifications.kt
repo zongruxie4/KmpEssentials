@@ -8,6 +8,11 @@ expect class KmpLocalNotifications {
         fun sendNotification(title: String, message: String)
 
         /**
+         * Broadcasts a local notification with the specified Title & Message (runs only if in background)
+         * */
+        fun sendNotificationWithLowPriority(title: String, message: String)
+
+        /**
          * Schedules an alarm, and broadcasts a local notification with the specified Title & Message, after duration in milliseconds has passed
          * @param durationMS milliseconds until the local notification is triggered
          * */

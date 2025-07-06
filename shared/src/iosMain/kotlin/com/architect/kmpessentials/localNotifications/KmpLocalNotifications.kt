@@ -53,6 +53,27 @@ actual class KmpLocalNotifications {
             }
         }
 
+        actual fun sendNotificationWithLowPriority(title: String, message: String){
+            KmpMainThread.runViaMainThread {
+                val localNotifications = UNMutableNotificationContent()
+                localNotifications.setTitle(title)
+                localNotifications.setBody(message)
+                localNotifications.setSound(UNNotificationSound.defaultSound)
+
+                val request =
+                    UNNotificationRequest.requestWithIdentifier(
+                        "defaultNotification",
+                        localNotifications,
+                        null
+                    )
+
+                UNUserNotificationCenter.currentNotificationCenter()
+                    .addNotificationRequest(request) {
+
+                    }
+            }
+        }
+
         actual fun sendNotification(title: String, message: String) {
             KmpMainThread.runViaMainThread {
                 val localNotifications = UNMutableNotificationContent()

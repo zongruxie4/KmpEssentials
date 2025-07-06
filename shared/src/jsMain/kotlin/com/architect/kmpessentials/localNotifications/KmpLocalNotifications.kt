@@ -20,6 +20,10 @@ actual class KmpLocalNotifications {
             }
         }
 
+        actual fun sendNotificationWithLowPriority(title: String, message: String){
+
+        }
+
         actual fun scheduleAlarmNotification(
             durationMS: Long,
             title: String,

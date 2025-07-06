@@ -7,6 +7,10 @@ import platform.UserNotifications.UNUserNotificationCenter
 
 actual class KmpLocalNotifications {
     actual companion object {
+        actual fun sendNotificationWithLowPriority(title: String, message: String){
+
+        }
+
         actual fun sendNotification(title: String, message: String) {
             KmpMainThread.runViaMainThread {
                 val notificationContent = UNMutableNotificationContent()

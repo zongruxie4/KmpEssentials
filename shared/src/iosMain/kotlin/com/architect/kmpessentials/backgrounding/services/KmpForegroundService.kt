@@ -8,6 +8,7 @@ class KmpForegroundService {
     companion object {
         private val isTaskRunning = atomic(false)
         private val silentAudioService = SilentAudioService() // 🔊 Silent Audio Player
+        private var serviceJob: Job? = null
 
         fun startNotificationService(title: String, message: String, action: DefaultActionAsync) {
             if (!isTaskRunning.compareAndSet(expect = false, update = true)) {
@@ -24,7 +25,7 @@ class KmpForegroundService {
             silentAudioService.playAudioFromByteArray()
 
             // ✅ Execute the foreground task
-            GlobalScope.launch {
+            serviceJob = GlobalScope.launch {
                 try {
                     KmpLogging.writeError(
                         "KMP_MEDIA_SERVICE",
@@ -44,6 +45,8 @@ class KmpForegroundService {
         }
 
         fun stopNotificationService() {
+            serviceJob?.cancel()
+            serviceJob = null
             isTaskRunning.value = false
             MPNowPlayingInfoCenter.defaultCenter().nowPlayingInfo = null // Remove UI
             KmpLogging.writeError("KMP_FOREGROUND_SERVICE", "🛑 Notification service stopped.")
