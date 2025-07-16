@@ -33,17 +33,31 @@ actual class KmpCamera {
             return camera
         }
 
+        private fun postErrorForCamera() {
+            KmpLogging.writeError(
+                "Camera Hardware Missing",
+                "Unsupported device. Missing camera or hardware for this feature. Please try again on another device."
+            )
+        }
+
         actual fun capturePhoto(actionResult: ActionStringParams) {
             KmpPermissionsManager.isPermissionGranted(Permission.Camera) { r ->
                 if (r) {
                     KmpMainThread.runViaMainThread {
-                        photoActionResult = actionResult
-                        val camera = getCameraDevice()
-                        camera.cameraCaptureMode =
-                            UIImagePickerControllerCameraCaptureMode.UIImagePickerControllerCameraCaptureModePhoto
-                        camera.delegate = photoDelegate
+                        if (UIImagePickerController.isSourceTypeAvailable(
+                                UIImagePickerControllerSourceType.UIImagePickerControllerSourceTypeCamera
+                            )
+                        ) {
+                            photoActionResult = actionResult
+                            val camera = getCameraDevice()
+                            camera.cameraCaptureMode =
+                                UIImagePickerControllerCameraCaptureMode.UIImagePickerControllerCameraCaptureModePhoto
+                            camera.delegate = photoDelegate
 
-                        KmpiOS.getTopViewController()?.presentViewController(camera, true, null)
+                            KmpiOS.presentByDismissingViewModal(camera)
+                        } else {
+                            postErrorForCamera()
+                        }
                     }
                 } else {
                     KmpLogging.writeErrorWithCode(ErrorCodes.RUNTIME_PERMISSION_NOT_GRANTED)
@@ -56,17 +70,23 @@ actual class KmpCamera {
                 if (it) {
                     KmpPermissionsManager.isPermissionGranted(Permission.Camera) { r ->
                         if (r) {
-                            KmpMainThread.runViaMainThread {
-                                videoActionResult = actionResult
+                            if (UIImagePickerController.isSourceTypeAvailable(
+                                    UIImagePickerControllerSourceType.UIImagePickerControllerSourceTypeCamera
+                                )
+                            ) {
+                                KmpMainThread.runViaMainThread {
+                                    videoActionResult = actionResult
 
-                                val camera = getCameraDevice()
-                                camera.mediaTypes = listOf("public.movie")
-                                camera.cameraCaptureMode =
-                                    UIImagePickerControllerCameraCaptureMode.UIImagePickerControllerCameraCaptureModeVideo
-                                camera.delegate = videoDelegate
+                                    val camera = getCameraDevice()
+                                    camera.mediaTypes = listOf("public.movie")
+                                    camera.cameraCaptureMode =
+                                        UIImagePickerControllerCameraCaptureMode.UIImagePickerControllerCameraCaptureModeVideo
+                                    camera.delegate = videoDelegate
 
-                                KmpiOS.getTopViewController()
-                                    ?.presentViewController(camera, true, null)
+                                    KmpiOS.presentByDismissingViewModal(camera)
+                                }
+                            } else {
+                                postErrorForCamera()
                             }
                         } else {
                             KmpLogging.writeErrorWithCode(ErrorCodes.RUNTIME_PERMISSION_NOT_GRANTED)
@@ -78,5 +98,4 @@ actual class KmpCamera {
             }
         }
     }
-
 }

@@ -11,6 +11,8 @@ An essentials library for Kotlin multiplatform that makes it easier to work with
 </p>
 <br/>
 
+If you're looking for a Full Mvvm Solution with Dependency Injection, Navigation Engine, Flows and Live Data, consider also using [Atlas](https://github.com/Ares-Defence-Labs/Atlas)
+
 <p align="center">
    <a href="https://central.sonatype.com/artifact/io.github.thearchitect123/kmpEssentials">
     <img alt="GitHub" src="https://img.shields.io/maven-central/v/io.github.thearchitect123/kmpEssentials">
