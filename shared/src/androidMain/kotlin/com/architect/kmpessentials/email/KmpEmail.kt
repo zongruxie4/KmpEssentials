@@ -86,7 +86,12 @@ actual class KmpEmail {
             }
         }
 
-        actual fun sendEmailToAddress(address: String, emailSubject: String, emailMessage: String) {
+        actual fun sendEmailToAddress(
+            address: String,
+            emailSubject: String,
+            emailMessage: String,
+            promptInternal: Boolean
+        ) {
             KmpMainThread.runViaMainThread {
                 try {
                     var emailAddress = address
@@ -113,7 +118,7 @@ actual class KmpEmail {
             address: String,
             ccAddresses: Array<String>?,
             emailSubject: String,
-            emailMessage: String
+            emailMessage: String, promptInternal: Boolean
         ) {
             KmpMainThread.runViaMainThread {
                 try {

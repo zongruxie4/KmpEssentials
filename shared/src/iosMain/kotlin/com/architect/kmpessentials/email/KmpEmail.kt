@@ -2,6 +2,7 @@ package com.architect.kmpessentials.email
 
 import com.architect.kmpessentials.aliases.DefaultAction
 import com.architect.kmpessentials.email.delegates.EmailReceipientDelegate
+import com.architect.kmpessentials.email.extensions.encodeURL
 import com.architect.kmpessentials.internal.ActionBoolParams
 import com.architect.kmpessentials.logging.KmpLogging
 import com.architect.kmpessentials.logging.constants.ErrorCodes
@@ -16,11 +17,12 @@ actual class KmpEmail {
         private val mailDelegate = EmailReceipientDelegate()
         actual fun isEmailSupported(action: ActionBoolParams) {
             KmpMainThread.runViaMainThread {
-                action(MFMailComposeViewController.canSendMail())
+                val mailtoUrl = NSURL.URLWithString("mailto:")
+                action((mailtoUrl != null && UIApplication.sharedApplication.canOpenURL(mailtoUrl)))
             }
         }
 
-        actual fun openEmailClientApp(noAppsFound: DefaultAction?){
+        actual fun openEmailClientApp(noAppsFound: DefaultAction?) {
             val mailtoUrl = NSURL.URLWithString("mailto:")
 
             if (mailtoUrl != null && UIApplication.sharedApplication.canOpenURL(mailtoUrl)) {
@@ -30,11 +32,37 @@ actual class KmpEmail {
             }
         }
 
-        actual fun sendEmailToAddress(address: String, emailSubject: String, emailMessage: String) {
-            isEmailSupported {
-                if (it) {
-                    KmpMainThread.runViaMainThread {
-                        try {
+        actual fun sendEmailToAddress(
+            address: String,
+            emailSubject: String,
+            emailMessage: String,
+            promptInternal: Boolean
+        ) {
+            val promptEmailAction = {
+                KmpMainThread.runViaMainThread {
+                    val emailUrl =
+                        NSURL.URLWithString("mailto:$address?subject=${emailSubject}&body=${emailMessage}")
+                    if (emailUrl != null) {
+                        if (UIApplication.sharedApplication.canOpenURL(emailUrl)) {
+                            UIApplication.sharedApplication.openURL(
+                                emailUrl,
+                                options = emptyMap<Any?, Any?>(),
+                                completionHandler = null
+                            )
+                        }
+                    } else {
+                        KmpLogging.writeError(
+                            "KMP_ESSENTIALS_EMAIL",
+                            "Failed to encode url message"
+                        )
+                    }
+                }
+            }
+
+            KmpMainThread.runViaMainThread {
+                if (promptInternal) {
+                    try {
+                        if (MFMailComposeViewController.canSendMail()) {
                             val mailController = MFMailComposeViewController().apply {
                                 setToRecipients(arrayListOf(address))
                                 setMailComposeDelegate(mailDelegate)
@@ -48,15 +76,14 @@ actual class KmpEmail {
                             ) {
 
                             }
-                        } catch (ex: Exception) {
-                            KmpLogging.writeErrorWithCode(ErrorCodes.HARDWARE_SPECS_NOT_MET)
+                        } else {
+                            throw Exception("Cannot send email, defaulting to prompt")
                         }
+                    } catch (ex: Exception) {
+                        promptEmailAction()
                     }
                 } else {
-                    KmpLogging.writeError(
-                        "KMP_ESSENTIALS_EMAIL",
-                        "Email is not supported on this device"
-                    )
+                    promptEmailAction()
                 }
             }
         }
@@ -65,12 +92,44 @@ actual class KmpEmail {
             address: String,
             ccAddresses: Array<String>?,
             emailSubject: String,
-            emailMessage: String
+            emailMessage: String, promptInternal: Boolean
         ) {
-            isEmailSupported {
-                if (it) {
-                    KmpMainThread.runViaMainThread {
-                        try {
+            val runEmailAction = {
+                KmpMainThread.runViaMainThread {
+                    val allRecipients = buildString {
+                        append(address)
+                        ccAddresses?.takeIf { it.isNotEmpty() }?.let {
+                            append("?cc=")
+                            append(it.joinToString(",") { cc -> cc })
+                        }
+                        append("&subject=${emailSubject}")
+                        append("&body=${emailMessage}")
+                    }
+
+                    val mailtoString = "mailto:$allRecipients"
+                    val emailUrl = NSURL.URLWithString(mailtoString)
+
+                    if (emailUrl != null) {
+                        if (UIApplication.sharedApplication.canOpenURL(emailUrl)) {
+                            UIApplication.sharedApplication.openURL(emailUrl)
+                        } else {
+                            KmpLogging.writeError(
+                                "KMP_ESSENTIALS_EMAIL",
+                                "No mail app available to handle mailto URL."
+                            )
+                        }
+                    } else {
+                        KmpLogging.writeError(
+                            "KMP_ESSENTIALS_EMAIL",
+                            "Failed to encode url message"
+                        )
+                    }
+                }
+            }
+            KmpMainThread.runViaMainThread {
+                if (promptInternal) {
+                    try {
+                        if (MFMailComposeViewController.canSendMail()) {
                             val mailController = MFMailComposeViewController().apply {
                                 setToRecipients(arrayListOf(address, ccAddresses))
                                 setMailComposeDelegate(mailDelegate)
@@ -84,15 +143,14 @@ actual class KmpEmail {
                             ) {
 
                             }
-                        } catch (ex: Exception) {
-                            KmpLogging.writeErrorWithCode(ErrorCodes.HARDWARE_SPECS_NOT_MET)
+                        } else {
+                            throw Exception("Cannot send email, defaulting to prompt")
                         }
+                    } catch (ex: Exception) {
+                        runEmailAction()
                     }
                 } else {
-                    KmpLogging.writeError(
-                        "KMP_ESSENTIALS_EMAIL",
-                        "Email is not supported on this device"
-                    )
+                    runEmailAction()
                 }
             }
         }

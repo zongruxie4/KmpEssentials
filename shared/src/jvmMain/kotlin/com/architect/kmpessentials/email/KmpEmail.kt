@@ -30,7 +30,7 @@ actual class KmpEmail {
 
         }
 
-        actual fun sendEmailToAddress(address: String, emailSubject: String, emailMessage: String) {
+        actual fun sendEmailToAddress(address: String, emailSubject: String, emailMessage: String, promptInternal: Boolean) {
             // Construct mailto URI
             val uriStr = java.lang.String.format(
                 "mailto:%s?subject=%s&body=%s",
@@ -47,7 +47,7 @@ actual class KmpEmail {
             address: String,
             ccAddresses: Array<String>?,
             emailSubject: String,
-            emailMessage: String
+            emailMessage: String, promptInternal: Boolean
         ) {
             // Email URI
             val recipient =

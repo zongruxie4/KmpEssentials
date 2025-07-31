@@ -1,5 +1,6 @@
 package com.architect.kmpessentials.launcher
 
+import com.architect.kmpessentials.aliases.DefaultActionWithBooleanReturn
 import com.architect.kmpessentials.deviceInfo.DevicePlatform
 import com.architect.kmpessentials.deviceInfo.KmpDeviceInfo
 import com.architect.kmpessentials.logging.KmpLogging
@@ -21,6 +22,17 @@ actual class KmpLauncher {
 
         actual fun cancelAllTimers(){
 
+        }
+
+        actual fun startTimerRepeatingWithInitialCallback(seconds: Double, action: DefaultActionWithBooleanReturn) {
+            if(action()) {
+                val milliseconds = (seconds * 1000).toLong()
+                Timer().scheduleAtFixedRate(object : TimerTask() {
+                    override fun run() {
+                        if (!action()) this.cancel()
+                    }
+                }, 0, milliseconds)
+            }
         }
 
         actual fun startTimerRepeating(seconds: Double, action: () -> Boolean) {

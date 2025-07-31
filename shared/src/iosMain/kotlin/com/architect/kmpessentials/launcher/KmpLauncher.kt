@@ -38,6 +38,21 @@ actual class KmpLauncher {
             }
         }
 
+        actual fun startTimerRepeatingWithInitialCallback(seconds: Double, action: DefaultActionWithBooleanReturn) {
+            KmpMainThread.runViaMainThread {
+                if(action()) {
+                    val timer = NSTimer.scheduledTimerWithTimeInterval(seconds, true, { timer ->
+                        if (!action()) {
+                            timer?.invalidate()
+                        }
+                    });
+
+                    NSRunLoop.mainRunLoop.addTimer(timer, NSRunLoopCommonModes);
+                    listOfTimers.add(timer)
+                }
+            }
+        }
+
         actual fun startTimerRepeating(seconds: Double, action: DefaultActionWithBooleanReturn) {
             KmpMainThread.runViaMainThread {
                 val timer = NSTimer.scheduledTimerWithTimeInterval(seconds, true, { timer ->

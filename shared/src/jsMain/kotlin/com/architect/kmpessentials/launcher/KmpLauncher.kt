@@ -1,5 +1,6 @@
 package com.architect.kmpessentials.launcher
 
+import com.architect.kmpessentials.aliases.DefaultActionWithBooleanReturn
 import kotlinx.browser.window
 
 actual class KmpLauncher {
@@ -21,6 +22,17 @@ actual class KmpLauncher {
                     window.clearTimeout(timerId)
                 }
             }, milliseconds)
+        }
+        actual fun startTimerRepeatingWithInitialCallback(seconds: Double, action: DefaultActionWithBooleanReturn) {
+            if(action()) {
+                val milliseconds = (seconds * 1000).toInt()
+                var timerId = 0
+                timerId = window.setInterval({
+                    if (!action()) {
+                        window.clearInterval(timerId)
+                    }
+                }, milliseconds)
+            }
         }
 
         actual fun startTimerRepeating(seconds: Double, action: () -> Boolean) {

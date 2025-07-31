@@ -18,11 +18,11 @@ actual class KmpEmail {
 
 
 
-        actual fun sendEmailToAddress(address: String, emailSubject : String, emailMessage: String) {
+        actual fun sendEmailToAddress(address: String, emailSubject : String, emailMessage: String, promptInternal: Boolean) {
 
         }
 
-        actual fun sendEmailsToCCAddress(address: String, ccAddresses: Array<String>?, emailSubject : String, emailMessage: String) {
+        actual fun sendEmailsToCCAddress(address: String, ccAddresses: Array<String>?, emailSubject : String, emailMessage: String, promptInternal: Boolean) {
 
         }
     }

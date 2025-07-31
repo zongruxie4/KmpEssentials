@@ -227,7 +227,7 @@ kotlin {
 //        }
 //    }
 //}
-
+//
 
 afterEvaluate {
     mavenPublishing {
@@ -235,7 +235,7 @@ afterEvaluate {
         coordinates(
             groupId = "io.github.thearchitect123",
             artifactId = "kmpEssentials",
-            version = "2.3.9"
+            version = "2.4.1"
         )
 
         // Configure POM metadata for the published artifact

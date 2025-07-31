@@ -9,7 +9,7 @@ actual class KmpLauncher {
 
         }
 
-        actual fun startTimerRepeating(seconds: Double, action: DefaultActionWithBooleanReturn) {
+        actual fun startTimerRepeatingWithInitialCallback(seconds: Double, action: DefaultActionWithBooleanReturn) {
 
         }
 

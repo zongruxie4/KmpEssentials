@@ -20,6 +20,13 @@ expect class KmpLauncher {
         fun startTimerRepeating(seconds: Double, action: DefaultActionWithBooleanReturn)
 
         /**
+         * Starts a native timer that reruns your action with the specified delay. Continues Looping and reruns the action, until you return False
+         * Return True only if the Timer Loop needs to be closed. This function also runs your action before the timer expires (onetime). It is to be used only if you need a repeating timer, with an action that runs before the first timer iteration expires.
+         * @param seconds the delay to use between loops (for your action). Example, if specifying One Second = Run Action Every Second (AND LOOPS, UNTIL RETURNS FALSE)
+         * */
+        fun startTimerRepeatingWithInitialCallback(seconds: Double, action: DefaultActionWithBooleanReturn)
+
+        /**
          * Cancels all running timers
          * */
         fun cancelAllTimers()

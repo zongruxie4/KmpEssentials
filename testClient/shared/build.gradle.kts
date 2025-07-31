@@ -30,6 +30,7 @@ kotlin {
         it.binaries.framework {
             baseName = "shared"
             isStatic = true
+            export(projects.kmpEssentials)
         }
     }
 
@@ -37,7 +38,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
-                implementation(projects.kmpEssentials)
+                api(projects.kmpEssentials)
             }
         }
 

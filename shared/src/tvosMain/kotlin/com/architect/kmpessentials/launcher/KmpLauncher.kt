@@ -16,6 +16,10 @@ actual class KmpLauncher {
 
         }
 
+        actual fun startTimerRepeatingWithInitialCallback(seconds: Double, action: DefaultActionWithBooleanReturn) {
+
+        }
+
         actual fun launchExternalMapsAppWithAddress(
             address: String,
             markerTitle: String

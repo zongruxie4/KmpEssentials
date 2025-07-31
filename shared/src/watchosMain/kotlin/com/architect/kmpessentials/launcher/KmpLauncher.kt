@@ -50,6 +50,20 @@ actual class KmpLauncher {
             }
         }
 
+        actual fun startTimerRepeatingWithInitialCallback(seconds: Double, action: DefaultActionWithBooleanReturn) {
+            KmpMainThread.runViaMainThread {
+                if(action()) {
+                    val timer = NSTimer.scheduledTimerWithTimeInterval(seconds, true, { timer ->
+                        if (!action()) {
+                            timer?.invalidate()
+                        }
+                    });
+
+                    NSRunLoop.mainRunLoop.addTimer(timer, NSRunLoopCommonModes);
+                }
+            }
+        }
+
         actual fun launchExternalMapsAppWithAddress(
             address: String,
             markerTitle: String

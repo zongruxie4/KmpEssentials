@@ -47,6 +47,27 @@ actual class KmpLauncher {
             }
         }
 
+        actual fun startTimerRepeatingWithInitialCallback(
+            seconds: Double,
+            action: DefaultActionWithBooleanReturn
+        ) {
+            KmpMainThread.runViaMainThread {
+                if(action()) {
+                    val handler = Handler(Looper.getMainLooper());
+                    val runnable = object : Runnable {
+                        override fun run() {
+                            if (action()) {
+                                handler.postDelayed(this, (seconds * 1000).toLong())
+                            }
+                        }
+                    }
+
+                    handler.postDelayed(runnable, seconds.toLong() * 1000);
+                    handlers.add(handler to runnable)
+                }
+            }
+        }
+
         private fun addIntentFlags(intent: Intent) {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
