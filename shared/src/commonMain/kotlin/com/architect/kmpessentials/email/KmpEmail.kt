@@ -14,7 +14,13 @@ expect class KmpEmail {
         /**
          * Sends an email to multiple recipients
          * */
-        fun sendEmailsToCCAddress(address: String, ccAddresses: Array<String>? = null, emailSubject : String = "", emailMessage: String = "", promptInternal: Boolean = true)
+        fun sendEmailsToCCAddress(
+            address: String,
+            ccAddresses: Array<String>? = null,
+            emailSubject: String = "",
+            emailMessage: String = "",
+            promptInternal: Boolean = true
+        )
 
         /**
          * Opens the email app or choice of apps available capable of handling emails

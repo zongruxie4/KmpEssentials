@@ -20,12 +20,15 @@ actual class KmpLauncher {
             }, milliseconds)
         }
 
-        actual fun cancelAllTimers(){
+        actual fun cancelAllTimers() {
 
         }
 
-        actual fun startTimerRepeatingWithInitialCallback(seconds: Double, action: DefaultActionWithBooleanReturn) {
-            if(action()) {
+        actual fun startTimerRepeatingWithInitialCallback(
+            seconds: Double,
+            action: DefaultActionWithBooleanReturn
+        ) {
+            if (action()) {
                 val milliseconds = (seconds * 1000).toLong()
                 Timer().scheduleAtFixedRate(object : TimerTask() {
                     override fun run() {
@@ -35,7 +38,36 @@ actual class KmpLauncher {
             }
         }
 
+        actual fun startTimerRepeatingWithInitialCallback(
+            seconds: Double,
+            allowCancel: Boolean,
+            action: DefaultActionWithBooleanReturn
+        ) {
+            if (action()) {
+                val milliseconds = (seconds * 1000).toLong()
+                Timer().scheduleAtFixedRate(object : TimerTask() {
+                    override fun run() {
+                        if (!action()) this.cancel()
+                    }
+                }, 0, milliseconds)
+            }
+        }
+
+
         actual fun startTimerRepeating(seconds: Double, action: () -> Boolean) {
+            val milliseconds = (seconds * 1000).toLong()
+            Timer().scheduleAtFixedRate(object : TimerTask() {
+                override fun run() {
+                    if (!action()) this.cancel()
+                }
+            }, 0, milliseconds)
+        }
+
+        actual fun startTimerRepeating(
+            seconds: Double,
+            allowCancel: Boolean,
+            action: () -> Boolean
+        ) {
             val milliseconds = (seconds * 1000).toLong()
             Timer().scheduleAtFixedRate(object : TimerTask() {
                 override fun run() {

@@ -38,9 +38,12 @@ actual class KmpLauncher {
             }
         }
 
-        actual fun startTimerRepeatingWithInitialCallback(seconds: Double, action: DefaultActionWithBooleanReturn) {
+        actual fun startTimerRepeatingWithInitialCallback(
+            seconds: Double,
+            action: DefaultActionWithBooleanReturn
+        ) {
             KmpMainThread.runViaMainThread {
-                if(action()) {
+                if (action()) {
                     val timer = NSTimer.scheduledTimerWithTimeInterval(seconds, true, { timer ->
                         if (!action()) {
                             timer?.invalidate()
@@ -49,6 +52,28 @@ actual class KmpLauncher {
 
                     NSRunLoop.mainRunLoop.addTimer(timer, NSRunLoopCommonModes);
                     listOfTimers.add(timer)
+                }
+            }
+        }
+
+        actual fun startTimerRepeatingWithInitialCallback(
+            seconds: Double,
+            allowCancel: Boolean,
+            action: DefaultActionWithBooleanReturn
+        ) {
+            KmpMainThread.runViaMainThread {
+                if (action()) {
+                    val timer = NSTimer.scheduledTimerWithTimeInterval(seconds, true, { timer ->
+                        if (!action()) {
+                            timer?.invalidate()
+                        }
+                    });
+
+                    NSRunLoop.mainRunLoop.addTimer(timer, NSRunLoopCommonModes);
+
+                    if (allowCancel) {
+                        listOfTimers.add(timer)
+                    }
                 }
             }
         }
@@ -63,6 +88,26 @@ actual class KmpLauncher {
 
                 NSRunLoop.mainRunLoop.addTimer(timer, NSRunLoopCommonModes);
                 listOfTimers.add(timer)
+            }
+        }
+
+        actual fun startTimerRepeating(
+            seconds: Double,
+            allowCancel: Boolean,
+            action: DefaultActionWithBooleanReturn
+        ) {
+            KmpMainThread.runViaMainThread {
+                val timer = NSTimer.scheduledTimerWithTimeInterval(seconds, true, { timer ->
+                    if (!action()) {
+                        timer?.invalidate()
+                    }
+                });
+
+                NSRunLoop.mainRunLoop.addTimer(timer, NSRunLoopCommonModes);
+
+                if(allowCancel) {
+                    listOfTimers.add(timer)
+                }
             }
         }
 

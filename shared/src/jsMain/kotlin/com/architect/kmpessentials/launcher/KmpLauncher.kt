@@ -9,7 +9,7 @@ actual class KmpLauncher {
             return js("encodeURIComponent(value)") as String
         }
 
-        actual fun cancelAllTimers(){
+        actual fun cancelAllTimers() {
 
         }
 
@@ -23,8 +23,12 @@ actual class KmpLauncher {
                 }
             }, milliseconds)
         }
-        actual fun startTimerRepeatingWithInitialCallback(seconds: Double, action: DefaultActionWithBooleanReturn) {
-            if(action()) {
+
+        actual fun startTimerRepeatingWithInitialCallback(
+            seconds: Double,
+            action: DefaultActionWithBooleanReturn
+        ) {
+            if (action()) {
                 val milliseconds = (seconds * 1000).toInt()
                 var timerId = 0
                 timerId = window.setInterval({
@@ -35,7 +39,38 @@ actual class KmpLauncher {
             }
         }
 
+        actual fun startTimerRepeatingWithInitialCallback(
+            seconds: Double,
+            allowCancel: Boolean,
+            action: DefaultActionWithBooleanReturn
+        ) {
+            if (action()) {
+                val milliseconds = (seconds * 1000).toInt()
+                var timerId = 0
+                timerId = window.setInterval({
+                    if (!action()) {
+                        window.clearInterval(timerId)
+                    }
+                }, milliseconds)
+            }
+        }
+
+
         actual fun startTimerRepeating(seconds: Double, action: () -> Boolean) {
+            val milliseconds = (seconds * 1000).toInt()
+            var timerId = 0
+            timerId = window.setInterval({
+                if (!action()) {
+                    window.clearInterval(timerId)
+                }
+            }, milliseconds)
+        }
+
+        actual fun startTimerRepeating(
+            seconds: Double,
+            allowCancel: Boolean,
+            action: () -> Boolean
+        ) {
             val milliseconds = (seconds * 1000).toInt()
             var timerId = 0
             timerId = window.setInterval({

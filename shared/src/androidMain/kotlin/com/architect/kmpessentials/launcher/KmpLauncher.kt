@@ -7,32 +7,64 @@ import android.os.Looper
 import android.provider.Settings
 import com.architect.kmpessentials.KmpAndroid
 import com.architect.kmpessentials.aliases.DefaultActionWithBooleanReturn
-import com.architect.kmpessentials.aliases.DefaultActionWithBooleanReturnAsync
 import com.architect.kmpessentials.launcher.constants.UriPrefixes
-import com.architect.kmpessentials.mainThread.KmpMainThread
 
 actual class KmpLauncher {
     actual companion object {
         private val handlers = mutableListOf<Pair<Handler, Runnable>>()
         actual fun cancelAllTimers() {
-            KmpMainThread.runViaMainThread {
-                handlers.forEach { (handler, runnable) -> handler.removeCallbacks(runnable) }
-                handlers.clear()
-            }
+            handlers.forEach { (handler, runnable) -> handler.removeCallbacks(runnable) }
+            handlers.clear()
         }
 
         actual fun startTimer(seconds: Double, action: DefaultActionWithBooleanReturn) {
-            KmpMainThread.runViaMainThread {
-                val handler = Handler(Looper.getMainLooper());
-                val runnable = Runnable { action() }
+            val handler = Handler(Looper.getMainLooper());
+            val runnable = Runnable { action() }
 
-                handler.postDelayed(runnable, seconds.toLong() * 1000);
+            handler.postDelayed(runnable, seconds.toLong() * 1000);
+            handlers.add(handler to runnable)
+        }
+
+        actual fun startTimerRepeating(seconds: Double, action: DefaultActionWithBooleanReturn) {
+            val handler = Handler(Looper.getMainLooper());
+            val runnable = object : Runnable {
+                override fun run() {
+                    if (action()) {
+                        handler.postDelayed(this, (seconds * 1000).toLong())
+                    }
+                }
+            }
+
+            handler.postDelayed(runnable, seconds.toLong() * 1000);
+            handlers.add(handler to runnable)
+        }
+
+        actual fun startTimerRepeating(
+            seconds: Double,
+            allowCancel: Boolean,
+            action: DefaultActionWithBooleanReturn
+        ) {
+            val handler = Handler(Looper.getMainLooper());
+            val runnable = object : Runnable {
+                override fun run() {
+                    if (action()) {
+                        handler.postDelayed(this, (seconds * 1000).toLong())
+                    }
+                }
+            }
+
+            handler.postDelayed(runnable, seconds.toLong() * 1000);
+
+            if (allowCancel) {
                 handlers.add(handler to runnable)
             }
         }
 
-        actual fun startTimerRepeating(seconds: Double, action: DefaultActionWithBooleanReturn) {
-            KmpMainThread.runViaMainThread {
+        actual fun startTimerRepeatingWithInitialCallback(
+            seconds: Double,
+            action: DefaultActionWithBooleanReturn
+        ) {
+            if (action()) {
                 val handler = Handler(Looper.getMainLooper());
                 val runnable = object : Runnable {
                     override fun run() {
@@ -49,20 +81,22 @@ actual class KmpLauncher {
 
         actual fun startTimerRepeatingWithInitialCallback(
             seconds: Double,
+            allowCancel: Boolean,
             action: DefaultActionWithBooleanReturn
         ) {
-            KmpMainThread.runViaMainThread {
-                if(action()) {
-                    val handler = Handler(Looper.getMainLooper());
-                    val runnable = object : Runnable {
-                        override fun run() {
-                            if (action()) {
-                                handler.postDelayed(this, (seconds * 1000).toLong())
-                            }
+            if (action()) {
+                val handler = Handler(Looper.getMainLooper());
+                val runnable = object : Runnable {
+                    override fun run() {
+                        if (action()) {
+                            handler.postDelayed(this, (seconds * 1000).toLong())
                         }
                     }
+                }
 
-                    handler.postDelayed(runnable, seconds.toLong() * 1000);
+                handler.postDelayed(runnable, seconds.toLong() * 1000);
+
+                if (allowCancel) {
                     handlers.add(handler to runnable)
                 }
             }

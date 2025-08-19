@@ -8,7 +8,8 @@ actual class KmpLauncher {
 
         }
 
-        actual fun cancelAllTimers(){
+
+        actual fun cancelAllTimers() {
 
         }
 
@@ -16,9 +17,30 @@ actual class KmpLauncher {
 
         }
 
-        actual fun startTimerRepeatingWithInitialCallback(seconds: Double, action: DefaultActionWithBooleanReturn) {
+        actual fun startTimerRepeating(
+            seconds: Double,
+            allowCancel: Boolean,
+            action: DefaultActionWithBooleanReturn
+        ) {
 
         }
+
+
+        actual fun startTimerRepeatingWithInitialCallback(
+            seconds: Double,
+            action: DefaultActionWithBooleanReturn
+        ) {
+
+        }
+
+        actual fun startTimerRepeatingWithInitialCallback(
+            seconds: Double,
+            allowCancel: Boolean,
+            action: DefaultActionWithBooleanReturn
+        ) {
+
+        }
+
 
         actual fun launchExternalMapsAppWithAddress(
             address: String,

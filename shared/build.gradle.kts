@@ -1,4 +1,5 @@
 import com.vanniktech.maven.publish.SonatypeHost
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -33,14 +34,17 @@ tasks.register("assembleXCFramework") {
                 "xcodebuild",
                 "-create-xcframework",
 
-                "-framework", "${buildDir}/bin/iosArm64/releaseFramework/KmpEssentials.framework",
-                "-framework", "${buildDir}/bin/iosSimulatorArm64/releaseFramework/KmpEssentials.framework",
+                "-framework",
+                "${buildDir}/bin/iosArm64/releaseFramework/KmpEssentials.framework",
+                "-framework",
+                "${buildDir}/bin/iosSimulatorArm64/releaseFramework/KmpEssentials.framework",
 
 //                "-framework", "${buildDir}/bin/iosArm64/debugFramework/shared.framework",
 //                "-framework", "${buildDir}/bin/iosX64/debugFramework/shared.framework",
 //                "-framework", "${buildDir}/bin/iosSimulatorArm64/debugFramework/shared.framework",
 
-                "-output", xcFrameworkDir.get().asFile.absolutePath
+                "-output",
+                xcFrameworkDir.get().asFile.absolutePath
             )
         }
 
@@ -127,7 +131,7 @@ kotlin {
 
         // jvm
         val jvmMain by getting {
-            dependencies{
+            dependencies {
                 implementation("org.json:json:20250107")
                 implementation("org.bytedeco:javacv:1.5.9")
                 implementation("net.java.dev.jna:jna-platform:4.0.0")
@@ -136,8 +140,8 @@ kotlin {
             }
         }
 
-        val jsMain by getting{
-            dependencies{
+        val jsMain by getting {
+            dependencies {
                 implementation("com.diglol.crypto:crypto:0.2.0")
                 implementation("org.kotlincrypto.hash:sha2:0.6.1")
             }
@@ -235,7 +239,7 @@ afterEvaluate {
         coordinates(
             groupId = "io.github.thearchitect123",
             artifactId = "kmpEssentials",
-            version = "2.4.1"
+            version = "2.4.5"
         )
 
         // Configure POM metadata for the published artifact
