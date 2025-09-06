@@ -134,7 +134,7 @@ kotlin {
             dependencies {
                 implementation("org.json:json:20250107")
                 implementation("org.bytedeco:javacv:1.5.9")
-                implementation("net.java.dev.jna:jna-platform:4.0.0")
+                implementation("net.java.dev.jna:jna-platform:5.17.0")
                 implementation("net.java.dev.jna:jna:5.13.0")
                 implementation("org.quartz-scheduler:quartz:2.3.2")
             }
@@ -143,7 +143,7 @@ kotlin {
         val jsMain by getting {
             dependencies {
                 implementation("com.diglol.crypto:crypto:0.2.0")
-                implementation("org.kotlincrypto.hash:sha2:0.6.1")
+                implementation("org.kotlincrypto.hash:sha2:0.7.1")
             }
         }
 
@@ -169,7 +169,7 @@ kotlin {
                 implementation("com.google.android.play:review:2.0.2")
                 implementation("com.google.android.play:review-ktx:2.0.2")
 
-                implementation("dev.tmapps:konnection:1.4.3")
+                implementation("dev.tmapps:konnection:1.4.5")
                 implementation("com.liftric:kvault:1.12.0")
 
                 implementation("io.coil-kt:coil:2.4.0")
@@ -179,7 +179,7 @@ kotlin {
                 implementation("androidx.activity:activity-ktx:1.9.1")
                 implementation("androidx.appcompat:appcompat:1.7.0")
                 implementation("androidx.startup:startup-runtime:1.1.1")
-                implementation("androidx.core:core-ktx:1.13.1")
+                implementation("androidx.core:core-ktx:1.17.0")
                 implementation("androidx.work:work-runtime-ktx:2.9.1")
                 implementation("com.google.android.gms:play-services-location:21.3.0")
                 implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.4")
@@ -194,7 +194,7 @@ kotlin {
         val iosMain by getting {
             resources.srcDirs("src/iosMain/resources")
             dependencies {
-                implementation("dev.tmapps:konnection:1.4.3")
+                implementation("dev.tmapps:konnection:1.4.5")
                 implementation("com.liftric:kvault:1.12.0")
             }
         }
