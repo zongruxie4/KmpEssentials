@@ -169,7 +169,7 @@ kotlin {
                 implementation("com.google.android.play:review:2.0.2")
                 implementation("com.google.android.play:review-ktx:2.0.2")
 
-                implementation("dev.tmapps:konnection:1.4.3")
+                implementation("dev.tmapps:konnection:1.4.5")
                 implementation("com.liftric:kvault:1.12.0")
 
                 implementation("io.coil-kt:coil:2.4.0")
@@ -194,7 +194,7 @@ kotlin {
         val iosMain by getting {
             resources.srcDirs("src/iosMain/resources")
             dependencies {
-                implementation("dev.tmapps:konnection:1.4.3")
+                implementation("dev.tmapps:konnection:1.4.5")
                 implementation("com.liftric:kvault:1.12.0")
             }
         }
