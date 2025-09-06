@@ -9,10 +9,14 @@ actual class KmpConnectivity {
     actual companion object {
         private val konnection = Konnection.instance
         private var hasConnection = false
+
+        private var connectionState: ActionBoolParams? = null
+
         init {
             GlobalScope.launch {
-                konnection.observeHasConnection().collect{
+                konnection.observeHasConnection().collect {
                     hasConnection = it
+                    connectionState?.invoke(it)
                 }
             }
         }
@@ -26,16 +30,14 @@ actual class KmpConnectivity {
         }
 
         actual suspend fun listenToConnectionChange(connectionState: ActionBoolParams) {
-            konnection.observeHasConnection().collect { hasConnection ->
-                connectionState(hasConnection)
-            }
+            this.connectionState = connectionState
         }
 
-        actual suspend  fun getCurrentNetworkIPv4(): String?{
+        actual suspend fun getCurrentNetworkIPv4(): String? {
             return konnection.getInfo()?.ipv4
         }
 
-        actual suspend  fun getCurrentNetworkIPv6(): String?{
+        actual suspend fun getCurrentNetworkIPv6(): String? {
             return konnection.getInfo()?.ipv6
         }
     }

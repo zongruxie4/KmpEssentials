@@ -130,6 +130,15 @@ actual class KmpPermissionsManager {
             }
         }
 
+        actual fun requestPermissionVerifyIfDenied(
+            permission: Permission,
+            runAction: ActionNoParams,
+            onDenied: ActionNoParams,
+        ) {
+            KmpAndroid.guserDisabledPermissionOnInvoke = onDenied // reset the prompt on each call
+            requestPermission(permission, runAction)
+        }
+
         // check if using location permission
         private fun requestPermissions(
             permission: Permission,

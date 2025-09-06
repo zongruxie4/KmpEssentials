@@ -87,9 +87,25 @@ actual class KmpPermissionsManager {
             }
         }
 
+        actual fun requestPermissionVerifyIfDenied(
+            permission: Permission,
+            runAction: ActionNoParams,
+            onDenied: ActionNoParams,
+        ) {
+            onRequestPermission(permission, runAction, onDenied)
+        }
+
         actual fun requestPermission(
             permission: Permission,
             runAction: ActionNoParams
+        ) {
+            onRequestPermission(permission, runAction)
+        }
+
+        private fun onRequestPermission(
+            permission: Permission,
+            runAction: ActionNoParams,
+            onDenied: ActionNoParams? = null
         ) {
             KmpMainThread.runViaMainThread {
                 when (permission) {
@@ -100,6 +116,8 @@ actual class KmpPermissionsManager {
                             ) { res, error ->
                                 if (res) {
                                     runAction()
+                                } else {
+                                    onDenied?.invoke()
                                 }
                             }
                     }
@@ -108,6 +126,8 @@ actual class KmpPermissionsManager {
                         AVAudioSession.sharedInstance().requestRecordPermission {
                             if (it) {
                                 runAction()
+                            } else {
+                                onDenied?.invoke()
                             }
                         }
                     }
@@ -123,6 +143,7 @@ actual class KmpPermissionsManager {
                     }
                 }
             }
+
         }
 
         // DEPRECATED API
@@ -165,6 +186,7 @@ actual class KmpPermissionsManager {
                             CLLocationManager().authorizationStatus() == kCLAuthorizationStatusNotDetermined
                         }
                     }
+
                     Permission.Microphone -> AVAudioSession.sharedInstance()
                         .recordPermission() == AVAudioSessionRecordPermissionUndetermined
 

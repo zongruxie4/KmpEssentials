@@ -17,6 +17,14 @@ actual class KmpPermissionsManager {
 
         }
 
+        actual fun requestPermissionVerifyIfDenied(
+            permission: Permission,
+            runAction: ActionNoParams,
+            onDenied: ActionNoParams,
+        ) {
+
+        }
+
         actual fun isPermissionGranted(permission: Permission): Boolean {
             return false
         }

@@ -53,6 +53,14 @@ actual class KmpPermissionsManager {
             }
         }
 
+        actual fun requestPermissionVerifyIfDenied(
+            permission: Permission,
+            runAction: ActionNoParams,
+            onDenied: ActionNoParams,
+        ) {
+
+        }
+
         actual fun requestPermission(
             permission: Permission,
             runAction: ActionNoParams

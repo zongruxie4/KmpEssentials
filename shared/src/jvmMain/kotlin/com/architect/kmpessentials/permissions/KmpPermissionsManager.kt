@@ -12,6 +12,14 @@ import com.architect.kmpessentials.permissions.helpers.PhotoGalleryPermission
 
 actual class KmpPermissionsManager {
     actual companion object {
+        actual fun requestPermissionVerifyIfDenied(
+            permission: Permission,
+            runAction: ActionNoParams,
+            onDenied: ActionNoParams,
+        ) {
+
+        }
+
         actual fun requestPermission(
             permission: Permission,
             runAction: ActionNoParams

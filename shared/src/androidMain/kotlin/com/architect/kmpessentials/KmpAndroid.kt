@@ -39,6 +39,7 @@ class KmpAndroid {
         internal var clientAppContext: FragmentActivity? = null
         internal val sensorManagerObserver = SensorObserver()
         internal var guserDisabledPermission: DefaultAction? = null
+        internal var guserDisabledPermissionOnInvoke: DefaultAction? = null
 
         fun getCurrentActivityContext(): FragmentActivity {
             return clientAppContext!!
@@ -110,14 +111,17 @@ class KmpAndroid {
                         KmpPermissionsManager.successAction()
                     } else {
                         // permission has not been enabled
-                        guserDisabledPermission?.invoke()
+                        guserDisabledPermissionOnInvoke?.invoke()
+                            ?: guserDisabledPermission?.invoke()
+                        guserDisabledPermissionOnInvoke = null
                     }
                 }
 
             KmpPermissionsManager.resultManyLauncher =
                 clientAppContext!!.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
                     if (result.values.any { !it }) { // all permissions must be enabled for this to work
-                        guserDisabledPermission?.invoke()
+                        guserDisabledPermissionOnInvoke?.invoke() ?: guserDisabledPermission?.invoke()
+                        guserDisabledPermissionOnInvoke = null
                     } else {
                         KmpPermissionsManager.successAction()
                     }

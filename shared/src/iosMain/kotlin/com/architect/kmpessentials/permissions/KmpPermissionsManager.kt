@@ -52,9 +52,10 @@ import platform.UserNotifications.UNUserNotificationCenter
 
 actual class KmpPermissionsManager {
     actual companion object {
-        actual fun requestPermission(
+        private fun onRequestPermission(
             permission: Permission,
-            runAction: ActionNoParams
+            runAction: ActionNoParams,
+            onDenied: ActionNoParams? = null
         ) {
             KmpMainThread.runViaMainThread {
                 when (permission) {
@@ -64,6 +65,7 @@ actual class KmpPermissionsManager {
                                 runAction()
                             } else {
                                 KmpLogging.writeErrorWithCode(ErrorCodes.RUNTIME_PERMISSION_NOT_GRANTED_REFUSED_BY_USER)
+                                onDenied?.invoke()
                             }
                         }
                     }
@@ -74,6 +76,7 @@ actual class KmpPermissionsManager {
                                 runAction()
                             } else {
                                 KmpLogging.writeErrorWithCode(ErrorCodes.RUNTIME_PERMISSION_NOT_GRANTED_REFUSED_BY_USER)
+                                onDenied?.invoke()
                             }
                         }
                     }
@@ -89,6 +92,7 @@ actual class KmpPermissionsManager {
                                     runAction()
                                 } else {
                                     KmpLogging.writeErrorWithCode(ErrorCodes.RUNTIME_PERMISSION_NOT_GRANTED_REFUSED_BY_USER)
+                                    onDenied?.invoke()
                                 }
                             }
                     }
@@ -99,6 +103,7 @@ actual class KmpPermissionsManager {
                                 runAction()
                             } else {
                                 KmpLogging.writeErrorWithCode(ErrorCodes.RUNTIME_PERMISSION_NOT_GRANTED_REFUSED_BY_USER)
+                                onDenied?.invoke()
                             }
                         }
                     }
@@ -109,6 +114,7 @@ actual class KmpPermissionsManager {
                                 runAction()
                             } else {
                                 KmpLogging.writeErrorWithCode(ErrorCodes.RUNTIME_PERMISSION_NOT_GRANTED_REFUSED_BY_USER)
+                                onDenied?.invoke()
                             }
                         }
                     }
@@ -117,14 +123,17 @@ actual class KmpPermissionsManager {
                         PHPhotoLibrary.requestAuthorization {
                             when (it) {
                                 PHAuthorizationStatusAuthorized -> runAction()
-                                else -> KmpLogging.writeErrorWithCode(ErrorCodes.RUNTIME_PERMISSION_NOT_GRANTED_REFUSED_BY_USER)
+                                else -> {
+                                    KmpLogging.writeErrorWithCode(ErrorCodes.RUNTIME_PERMISSION_NOT_GRANTED_REFUSED_BY_USER)
+                                    onDenied?.invoke()
+                                }
                             }
                         }
                     }
 
                     Permission.Location -> {
                         val location = CLLocationManager()
-                        location.delegate = LocationPermissionsDelegate(runAction)
+                        location.delegate = LocationPermissionsDelegate(runAction, onDenied)
                         location.requestWhenInUseAuthorization()
                     }
 
@@ -133,6 +142,22 @@ actual class KmpPermissionsManager {
                     }
                 }
             }
+
+        }
+
+        actual fun requestPermission(
+            permission: Permission,
+            runAction: ActionNoParams
+        ) {
+            onRequestPermission(permission, runAction)
+        }
+
+        actual fun requestPermissionVerifyIfDenied(
+            permission: Permission,
+            runAction: ActionNoParams,
+            onDenied: ActionNoParams,
+        ) {
+            onRequestPermission(permission, runAction, onDenied)
         }
 
         actual fun getCurrentPermissionState(
