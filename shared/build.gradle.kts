@@ -143,7 +143,7 @@ kotlin {
         val jsMain by getting {
             dependencies {
                 implementation("com.diglol.crypto:crypto:0.2.0")
-                implementation("org.kotlincrypto.hash:sha2:0.6.1")
+                implementation("org.kotlincrypto.hash:sha2:0.7.1")
             }
         }
 
