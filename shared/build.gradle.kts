@@ -177,7 +177,7 @@ kotlin {
                 implementation("com.google.android.material:material:1.12.0")
                 implementation("androidx.biometric:biometric:1.1.0")
                 implementation("androidx.activity:activity-ktx:1.9.1")
-                implementation("androidx.appcompat:appcompat:1.7.0")
+                implementation("androidx.appcompat:appcompat:1.7.1")
                 implementation("androidx.startup:startup-runtime:1.1.1")
                 implementation("androidx.core:core-ktx:1.17.0")
                 implementation("androidx.work:work-runtime-ktx:2.9.1")
