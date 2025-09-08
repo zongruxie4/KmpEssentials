@@ -182,7 +182,7 @@ kotlin {
                 implementation("androidx.core:core-ktx:1.17.0")
                 implementation("androidx.work:work-runtime-ktx:2.9.1")
                 implementation("com.google.android.gms:play-services-location:21.3.0")
-                implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.4")
+                implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.9.3")
                 implementation(libs.androidx.lifecycle.process)
             }
         }
