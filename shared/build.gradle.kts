@@ -10,7 +10,7 @@ plugins {
     id("org.gradle.maven-publish")
     id("signing")
     id("maven-publish")
-    id("com.vanniktech.maven.publish") version "0.28.0"
+    id("com.vanniktech.maven.publish") version "0.34.0"
     id("kotlin-parcelize")
 }
 
