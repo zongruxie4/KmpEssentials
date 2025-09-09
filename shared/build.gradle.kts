@@ -172,7 +172,7 @@ kotlin {
                 implementation("dev.tmapps:konnection:1.4.5")
                 implementation("com.liftric:kvault:1.12.0")
 
-                implementation("io.coil-kt:coil:2.4.0")
+                implementation("io.coil-kt:coil:2.7.0")
                 implementation("androidx.preference:preference:1.2.1")
                 implementation("com.google.android.material:material:1.12.0")
                 implementation("androidx.biometric:biometric:1.1.0")
