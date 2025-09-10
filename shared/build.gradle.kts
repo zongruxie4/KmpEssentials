@@ -133,7 +133,7 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 implementation("org.json:json:20250517")
-                implementation("org.bytedeco:javacv:1.5.9")
+                implementation("org.bytedeco:javacv:1.5.12")
                 implementation("net.java.dev.jna:jna-platform:5.17.0")
                 implementation("net.java.dev.jna:jna:5.17.0")
                 implementation("org.quartz-scheduler:quartz:2.3.2")
